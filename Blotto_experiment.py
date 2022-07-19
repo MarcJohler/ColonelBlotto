@@ -22,7 +22,7 @@ restarts = 1
 plot_every = 10**5
 tie_breaking_rule = "right-in-two"
 weights1 = np.array([1, 1, 1])
-symmetric_battlefields = all(weights1 == np.array([1, 1, 1]))
+symmetric_battlefields = len(np.unique(weights1)) == 1
 
 #cuda.select_device(gpu)
 

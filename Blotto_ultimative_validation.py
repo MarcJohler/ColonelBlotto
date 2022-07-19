@@ -2,7 +2,7 @@
 """
 Created on Fri Jul 15 17:40:05 2022
 
-@author: xZoCk
+@author: marc
 """
 
 from Blotto_alpha_rank import blotto_alpha_rank, evaluate_strategy_subset, blotto_mechanism, get_unique_permutations

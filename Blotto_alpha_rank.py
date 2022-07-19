@@ -17,7 +17,7 @@ from numba import cuda, njit, jit
 
 # computes the utility for the first player in a blotto game
 #@njit(nopython = True)
-def blotto_mechanism(bid1, bid2, weights1 = None, weights2 = None, tie_breaking_rule = "right-in-two"):
+def blotto_mechanism(bid1, bid2, weights1 = None, weights2 = None, tie_breaking_rule = "right-in-two", learnable_return = False):
     assert tie_breaking_rule in ["right-in-two", "all-or-nothing", "no-reward", "sharing-is-caring"]
     # if weights1 is not defined assume uniform weights
     if weights1 is None:
@@ -46,6 +46,8 @@ def blotto_mechanism(bid1, bid2, weights1 = None, weights2 = None, tie_breaking_
         p1wins = sum(weights1[p1wins])
         p2wins = sum(weights2[p2wins])
     # compare scores and comopute payoffs for p1 
+    if learnable_return:
+        return(p1wins / (p1wins + p2wins))
     if p1wins == p2wins:
         return(0)
     elif p1wins > p2wins:
@@ -285,7 +287,7 @@ def best_response_candidates(strategies, symmetric_battlefields = True, less_bud
     return best_response_candidates
 
 # evaluate strategy set against its best response
-def evaluate_strategy_subset(strategies, subset, weights1, weights2, budget, tie_breaking_rule, return_best_response = False):
+def evaluate_strategy_subset(strategies, subset, weights1, weights2, budget, tie_breaking_rule, return_best_response = False, learnable_return = False):
     # check if battlefields are symmetric
     symmetric_battlefields = False
     if all(weights1 == weights2) and all(weights1 == 1):
@@ -314,7 +316,7 @@ def evaluate_strategy_subset(strategies, subset, weights1, weights2, budget, tie
         # now check the performance against the best response
         loss = 0
         for bid in mixed_strategy:
-            loss += blotto_mechanism(cand, bid, weights1, weights2, tie_breaking_rule)
+            loss += blotto_mechanism(cand, bid, weights1, weights2, tie_breaking_rule, learnable_return = learnable_return)
         # compare with current worst loss
         cand_loss = loss / support_size
         if cand_loss > worst_case_loss:
@@ -395,7 +397,7 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
     
     # check if battlefields are symmetric
     symmetric_battlefields = False
-    if all(weights1 == weights2) and all(weights1 == 1):
+    if all(weights1 == weights2) and len(np.unique(weights1)) == 1:
         symmetric_battlefields = True
     # check if strategies are symmetric
     symmetric_strategies = False

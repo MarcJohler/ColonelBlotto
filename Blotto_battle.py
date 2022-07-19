@@ -2,7 +2,7 @@
 """
 Created on Fri Jul 15 18:37:50 2022
 
-@author: xZoCk
+@author: marc
 """
 import numpy as np
 from Blotto_ultimative_validation import blotto_ultimative_validation
@@ -44,7 +44,9 @@ strategies32_1, probs32_1 = discretize_action_space(number_of_battlefields, budg
 strategies27_1, probs27_1 = discretize_action_space(number_of_battlefields, budget1, symmetric_battlefields, 
                                                     granularity_level = 27, add_noise = add_noise, integer_bids = True)
 
-combined = np.vstack((strategies11_1, strategies49_1, strategie25_1, strategies32_1, strategies27_1))
+combined = np.vstack((strategies11_1, strategies49_1, strategie25_1, strategies32_1, strategies27_1)).astype(int)
+combined = np.unique(combined, axis = 0)
+
 probs = None
 
 blotto_ultimative_validation(combined, probs, strategies2 = None, probs2 = None, weights1 = weights1, symmetric_battlefields = symmetric_battlefields,
