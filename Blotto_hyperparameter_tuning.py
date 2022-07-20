@@ -17,15 +17,18 @@ import torch
 
 number_of_battlefields = 3
 budget1 = 1000
-budget2 = 1500
-symmetric_battlefields = True
-granularity_level = 15
+budget2 = 1000
+granularity_level = 10
 add_noise = False
-gpu = 4
 epochs = 10**7
-evaluate_every = 10**4
-patience = 5
+mode = "kmeans"
+eval_every = 10**2
+patience = 10**4
 restarts = 1
+track_every = 10**5
+tie_breaking_rule = "right-in-two"
+weights1 = np.array([1, 1, 1])
+symmetric_battlefields = len(np.unique(weights1)) == 1
 
 #cuda.select_device(gpu)
 
@@ -49,9 +52,9 @@ input_tuples[-1] = tuple(progress_tuple)
 
 # helps to apply function in multiprocessing
 def helper_func(pop_size, mr, track_progress):
-    return blotto_alpha_rank(strategies1, probs1, strategies2, probs2, pop_size = pop_size, alpha = 100, mr = mr, 
-                             restarts = restarts, epochs = epochs, 
-                             track_progress = track_progress, evaluate_every = evaluate_every, patience = patience, plot_every = False)
+    return blotto_alpha_rank(strategies1, probs1, strategies2, probs2, weights1 = weights1, weights2 = None, tie_breaking_rule = tie_breaking_rule, 
+                             pop_size = pop_size, alpha = 100, mr = mr, restarts = restarts, epochs = epochs, 
+                             track_every = track_every, eval_mode = mode, eval_every = eval_every, patience = patience, plot_every = epochs * 10)
 
 # converts multiprocessing output to dictionary
 def output_to_dict(val_list, input_tuples):
