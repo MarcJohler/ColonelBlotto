@@ -92,7 +92,7 @@ class Blotto_Attacker:
     def exploit_opponent(self):
         loss, best_response = evaluate_strategy_subset(self.opponent_history, self.opponent_history, 
                                                        self.opponent_weights, self.own_weights,
-                                                       self.budget, self.tie_breaking_rule)
+                                                       self.budget, self.tie_breaking_rule, return_best_response = True)
         self.current_strategy = best_response
         return best_response
         
@@ -139,5 +139,6 @@ def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2
             print("\n All-time loss for defender: ", all_time_loss, "\n")
             avg_counter = 0
             avg_loss = 0
+    return all_time_loss
             
         
