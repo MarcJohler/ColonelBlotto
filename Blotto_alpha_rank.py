@@ -47,7 +47,7 @@ def blotto_mechanism(bid1, bid2, weights1 = None, weights2 = None, tie_breaking_
         p2wins = sum(weights2[p2wins])
     # compare scores and comopute payoffs for p1 
     if learnable_return:
-        return(p1wins / (p1wins + p2wins))
+        return((p1wins - p2wins) / (p1wins + p2wins))
     if p1wins == p2wins:
         return(0)
     elif p1wins > p2wins:
@@ -269,10 +269,15 @@ def summarize_output(count_strat1, count_strat2, strategies1, strategies2, symme
 # find all valid candidates for best responses
 def best_response_candidates(strategies, symmetric_battlefields = True, less_budget = 0):
     n_battlefields = strategies.shape[1]
-    # compute all possible best responses
+    # initialize with first iteration
     perturbation = np.ones(n_battlefields)
-    perturbation[-1] -= (n_battlefields + less_budget)
+    perturbation[0] -= (n_battlefields + less_budget)
     best_response_candidates = strategies + perturbation
+    # compute all remaining possible best responses
+    for i in range(1, n_battlefields):
+        perturbation = np.ones(n_battlefields)
+        perturbation[i] -= (n_battlefields + less_budget)
+        best_response_candidates = np.vstack((best_response_candidates, strategies + perturbation))
     # exclude invalid candidates with bids < 0
     valid_perturbations = np.sum(best_response_candidates < 0, axis = 1) == 0
     best_response_candidates = best_response_candidates[valid_perturbations]
@@ -280,12 +285,10 @@ def best_response_candidates(strategies, symmetric_battlefields = True, less_bud
     if symmetric_battlefields:
         for i, cand in enumerate(best_response_candidates):
             best_response_candidates[i] = np.sort(cand)
-        # only output unique candidates
-        # type cast necessary (why?)
-        return np.unique(best_response_candidates.astype(float), axis = 0)
-    # otherwise simply return candidates
+    # only output unique strategies
+    best_response_candidates = np.unique(best_response_candidates.astype(float), axis = 0)
     return best_response_candidates
-
+        
 # evaluate strategy set against its best response
 def evaluate_strategy_subset(strategies, subset, weights1, weights2, budget, tie_breaking_rule, return_best_response = False, learnable_return = False):
     # check if battlefields are symmetric
@@ -310,13 +313,13 @@ def evaluate_strategy_subset(strategies, subset, weights1, weights2, budget, tie
     # get all the candidates for best response
     best_response_cand = best_response_candidates(strategies, symmetric_battlefields = symmetric_battlefields, less_budget = budget - sum(mixed_strategy[0]))
     # find the worst case fitness of the strategy set
-    worst_case_loss = 0
+    worst_case_loss = -1
     best_response = None
     for cand in best_response_cand:
         # now check the performance against the best response
         loss = 0
         for bid in mixed_strategy:
-            loss += blotto_mechanism(cand, bid, weights1, weights2, tie_breaking_rule, learnable_return = learnable_return)
+            loss += blotto_mechanism(cand, bid, weights2, weights1, tie_breaking_rule, learnable_return = learnable_return)
         # compare with current worst loss
         cand_loss = loss / support_size
         if cand_loss > worst_case_loss:
