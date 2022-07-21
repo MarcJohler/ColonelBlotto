@@ -25,8 +25,7 @@ pop_size = 10
 restarts = 1
 tie_breaking_rule = "right-in-two"
 weights1 = np.array([1, 1, 1])
-symmetric_battlefields = all(weights1 == np.array([1, 1, 1]))
-
+symmetric_battlefields = len(np.unique(weights1)) == 1
 
 ##############
 strategies11_1, probs11_1 = discretize_action_space(number_of_battlefields, budget1, symmetric_battlefields, 
@@ -49,7 +48,7 @@ combined = np.unique(combined, axis = 0)
 
 probs = None
 
-blotto_ultimative_validation(combined, probs, strategies2 = None, probs2 = None, weights1 = weights1, symmetric_battlefields = symmetric_battlefields,
+blotto_ultimative_validation(strategies11_1, probs, strategies2 = None, probs2 = None, weights1 = weights1, symmetric_battlefields = symmetric_battlefields,
                       pop_size = pop_size, alpha = 100, mr = mr, tie_breaking_rule = tie_breaking_rule,
                       batch_size = batch_size, restarts = restarts, outer_epochs = outer_epochs, inner_epochs = inner_epochs, 
                       ordered_output = True, track_every = inner_epochs * 10, eval_mode = "kmeans", eval_every = 10**2, 

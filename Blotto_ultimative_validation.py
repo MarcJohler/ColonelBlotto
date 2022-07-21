@@ -68,9 +68,12 @@ class Blotto_Defender:
         
     
 class Blotto_Attacker:
-    def __init__(self, budget, symmetric_battlefields):
+    def __init__(self, budget, symmetric_battlefields, own_weights, opponent_weights, tie_breaking_rule):
         self.budget = budget
         self.symmetric_battlefields = symmetric_battlefields
+        self.own_weights = own_weights
+        self.opponent_weights = opponent_weights
+        self.tie_breaking_rule = tie_breaking_rule
         # remember bids of opponent
         self.opponent_history = None
         self.current_strategy = None
@@ -87,7 +90,9 @@ class Blotto_Attacker:
             self.opponent_history = self.opponent_history[delete_n:]
         
     def exploit_opponent(self):
-        loss, best_response = evaluate_strategy_subset(self.opponent_history, self.opponent_history, self.symmetric_battlefields, return_best_response = True)
+        loss, best_response = evaluate_strategy_subset(self.opponent_history, self.opponent_history, 
+                                                       self.opponent_weights, self.own_weights,
+                                                       self.budget, self.tie_breaking_rule)
         self.current_strategy = best_response
         return best_response
         
@@ -95,7 +100,7 @@ class Blotto_Attacker:
 
 def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2 = None, weights1 = None, weights2 = None, tie_breaking_rule = "right-in-two",
                                  symmetric_battlefields = True, pop_size = 10, alpha = 50, mr = 0.01, 
-                                 restarts = 10, batch_size = 100, outer_epochs = 100, inner_epochs = 1000, 
+                                 restarts = 1, batch_size = 100, outer_epochs = 100, inner_epochs = 1000, 
                                  ordered_output = True, track_every = 100, eval_mode = "kmeans", eval_every = 100, 
                                  patience = 5, loss_goal = 0.12, plot_every = 100, surpress_plots = True):
     blotto_defender = Blotto_Defender(strategies1, probs1, strategies2, probs2, weights1, weights2, tie_breaking_rule,
@@ -103,7 +108,7 @@ def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2
                                       restarts, inner_epochs, ordered_output, 
                                       track_every, eval_mode, eval_every, patience, loss_goal, 
                                       plot_every, surpress_plots)
-    blotto_attacker = Blotto_Attacker(strategies1[0].sum(), symmetric_battlefields)
+    blotto_attacker = Blotto_Attacker(strategies1[0].sum(), symmetric_battlefields, weights2, weights1, tie_breaking_rule)
     # initialize defender with learned strategy
     blotto_defender.generate_random_strategy()
     # sample random action from defender strategy and initialize attacker strategy

@@ -21,8 +21,8 @@ max_support_size = 50
 sample_support_size = "max"
 patience = 100
 loss_goal = -1
-weights1 = np.array([1, 2, 1, 1])
-weights2 = np.array([1, 2, 1, 1])
+weights1 = np.array([1, 3, 2, 1])
+weights2 = np.array([1, 3, 2, 1])
 symmetric_battlefields = len(np.unique(weights1)) == 1
 
 one_granularity, probs = discretize_action_space(number_of_battlefields, budget1, symmetric_battlefields = symmetric_battlefields, 

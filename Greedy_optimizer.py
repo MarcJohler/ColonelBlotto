@@ -149,16 +149,10 @@ def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_w
         symmetric_battlefields = True
     
     opponent_strategies = strategies
-    # compute loss and best response for full set
-    loss, best_response = evaluate_strategy_subset(opponent_strategies, strategies, own_weights, opponent_weights, opponent_budget, tie_breaking_rule, return_best_response = True)
-    # let the whole set play against its best response again to find candidates to exclude
-    results_against_best_response = np.zeros(n_strategies)
-    for idx, strategy in enumerate(strategies):
-        results_against_best_response[idx] = blotto_mechanism(best_response, strategy, opponent_weights, own_weights, tie_breaking_rule)
     # save best strategy set and its loss
     overall_best_set = strategies
     overall_best_indizes = np.array([])
-    overall_best_loss = loss
+    overall_best_loss = 1
     remaining_patience = patience
     for i in range(restarts):
         if sample_support_size == "max":
@@ -167,6 +161,15 @@ def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_w
         else:
             own_strategies = strategies[np.random.choice(n_strategies, sample_support_size, replace = False)]
             support_size = sample_support_size
+            
+        # compute loss and best response for full set
+        loss, best_response = evaluate_strategy_subset(opponent_strategies, own_strategies, own_weights, opponent_weights, opponent_budget, tie_breaking_rule, return_best_response = True)
+        # let the whole set play against its best response again to find candidates to exclude
+        results_against_best_response = np.zeros(support_size)
+        for idx, strategy in enumerate(own_strategies):
+            results_against_best_response[idx] = blotto_mechanism(best_response, strategy, opponent_weights, own_weights, tie_breaking_rule)
+            
+        # start greedy optimizing
         while support_size > 1:
             iteration_best_idx = None
             iteration_best_set = None
