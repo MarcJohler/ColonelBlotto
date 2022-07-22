@@ -7,8 +7,8 @@ Created on Tue Jul 19 10:04:55 2022
 import numpy as np
 import math
 import scipy.special as ss
-from Blotto_alpha_rank import blotto_mechanism, get_unique_permutations, plot_strategies, best_response_candidates, evaluate_strategy_subset, blotto_mechanism
-
+from Blotto_alpha_rank import blotto_mechanism, get_unique_permutations, best_response_candidates, evaluate_strategy_subset, blotto_mechanism, bid_to_coordinate
+import matplotlib.pyplot as plt
 
 def add_strategy(strategy_set, add, symmetric_battlefields, n_perms):
     if strategy_set is None and symmetric_battlefields:
@@ -19,6 +19,49 @@ def add_strategy(strategy_set, add, symmetric_battlefields, n_perms):
         return np.vstack((strategy_set, get_unique_permutations(add, n_perms)))
     else:
         return np.vstack((strategy_set, add))
+    
+
+def plot_result(strategies, mixed_strategy, symmetric_battlefields = True):
+    all_strategies = np.vstack((strategies, mixed_strategy))
+    n_strategies = all_strategies.shape[0]
+    color_indicator = np.append(np.zeros(strategies.shape[0]), np.ones(mixed_strategy.shape[0]))
+    # initialize x and y
+    if symmetric_battlefields:
+        extended_colors = np.array([])
+        x = np.array([])
+        y = np.array([])
+
+        n_battlefields = strategies.shape[1]
+        n_perms_max = ss.perm(n_battlefields, n_battlefields, True)
+        # compute the coordinates for each permutation
+        for i in range(n_strategies):
+            # do case distinguishing
+            strategy_perms = get_unique_permutations(all_strategies[i], n_perms_max)
+            n_perms = strategy_perms.shape[0]
+            for j in range(n_perms):
+                new_x, new_y = bid_to_coordinate(strategy_perms[j])
+                x = np.append(x, new_x)
+                y = np.append(y, new_y)
+                extended_colors = np.append(extended_colors, color_indicator[i])
+        
+        extended_colors = np.where(extended_colors == 1, "green", "red")
+        # compute sizes from score values
+        sizes = strategies.max() / 100
+        return x, y, sizes, extended_colors
+            
+    else:
+        x = np.zeros(n_strategies)
+        y = np.zeros(n_strategies)
+        
+        for i in range(n_strategies):
+            strategy = all_strategies[i]
+            x[i], y[i] = bid_to_coordinate(strategy)
+        
+        sizes = strategies.max() / 100
+        colors = np.where(color_indicator == 1, "green", "red")
+        
+    # return reversed so that green is visible
+    return x, y, sizes, colors
         
 
 def greedy_strategy_optimizer(strategies, opponent_budget = None, own_weights = None, opponent_weights = None, tie_breaking_rule = "right-in-two",
@@ -230,6 +273,10 @@ def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_w
                 break
         if remaining_patience <= 0 or overall_best_loss <= loss_goal:
             break
+    
+    x, y, sizes, colors = plot_result(strategies, overall_best_set, symmetric_battlefields)
+    plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+    plt.show()
     
     return overall_best_set, overall_best_indizes, overall_best_loss
     

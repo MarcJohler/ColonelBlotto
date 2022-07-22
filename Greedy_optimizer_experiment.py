@@ -6,8 +6,9 @@ Created on Tue Jul 19 11:18:56 2022
 """
 
 from Blotto_discretizer import discretize_action_space
-from Greedy_optimizer import greedy_strategy_optimizer_backward, greedy_strategy_optimizer
+from Greedy_optimizer import greedy_strategy_optimizer_backward, greedy_strategy_optimizer, plot_result
 import numpy as np
+import matplotlib.pyplot as plt
 
 number_of_battlefields = 3
 budget1 = 1000
