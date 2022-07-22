@@ -8,22 +8,22 @@ Created on Fri Jul  1 19:37:45 2022
 
 from Blotto_discretizer import discretize_action_space
 from Blotto_alpha_rank import blotto_alpha_rank
+from Blotto_hyperparameter_evaluation import evaluate_hyperparameters
 import numpy as np
 import multiprocessing as mp
 from multiprocessing import set_start_method
 import sys
 from numba import cuda
-import torch
 
 number_of_battlefields = 3
 budget1 = 1000
 budget2 = 1000
-granularity_level = 10
+granularity_level = 32
 add_noise = False
 epochs = 10**7
 mode = "kmeans"
-eval_every = 10**2
-patience = 10**4
+eval_every = 10**3
+patience = 10**8
 restarts = 1
 track_every = 10**5
 tie_breaking_rule = "right-in-two"
@@ -70,8 +70,9 @@ output = pool_obj.starmap(helper_func, input_tuples)
 output_dict = output_to_dict(output, input_tuples)
             
 # write into textfile
-w = open(sys.path[0] + "/outputs/output_non_noise_granularity" + str(granularity_level) + "test.txt", "w")
+w = open(sys.path[0] + "/outputs/output_granularity_" + str(granularity_level) + ".txt", "w")
 w.write(str(output_dict))
 w.close()
 
-#torch.cuda.empty_cache()
+# evaluate the hyperparameters
+evaluate_hyperparameters("outputs/output_granularity_" + str(granularity_level) + ".txt", strategies1, weights1, weights1, tie_breaking_rule)

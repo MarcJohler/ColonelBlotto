@@ -9,10 +9,10 @@ from Blotto_discretizer import discretize_action_space
 from Greedy_optimizer import greedy_strategy_optimizer_backward, greedy_strategy_optimizer
 import numpy as np
 
-number_of_battlefields = 4 
+number_of_battlefields = 3
 budget1 = 1000
 budget2 = 1000
-granularity = 6
+granularity = 24
 add_noise = False
 tie_breaking_rule = "right-in-two"
 initialization = "weights"
@@ -21,8 +21,8 @@ max_support_size = 50
 sample_support_size = "max"
 patience = 100
 loss_goal = -1
-weights1 = np.array([1, 3, 2, 1])
-weights2 = np.array([1, 3, 2, 1])
+weights1 = np.array([1, 1, 1])
+weights2 = np.array([1, 1, 1])
 symmetric_battlefields = len(np.unique(weights1)) == 1
 
 one_granularity, probs = discretize_action_space(number_of_battlefields, budget1, symmetric_battlefields = symmetric_battlefields, 

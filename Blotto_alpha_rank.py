@@ -413,13 +413,15 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
     count_strat2 = np.zeros((n_strategies2, 2))
     count_strat2[:,0] = range(n_strategies2)
     
+    
+    best_loss = 1
+    best_mixed_strategy = None
+    best_labels = None
     for restart in range(restarts):
         #initialize population
         pop1 = np.repeat(np.random.choice(n_strategies1), pop_size)
         pop2 = np.repeat(np.random.choice(n_strategies2), pop_size)
         
-        best_loss = 1
-        best_mixed_strategy = None
         remaining_patience = patience
     
         for i in range(epochs):

@@ -48,4 +48,6 @@ ranks, labels = blotto_alpha_rank(strategies1, probs1, strategies2, probs2, weig
                                   pop_size = pop_size, alpha = 100, mr = mr, restarts = restarts, epochs = epochs, 
                                   track_every = plot_every, eval_mode = mode, eval_every = eval_every, patience = patience, plot_every = plot_every)
 
+
+
 # %%
