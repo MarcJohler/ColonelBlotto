@@ -60,7 +60,7 @@ class Blotto_Defender:
         mirrored_strategies = mirrored_strategies[1:]
         self.current_strategy = mirrored_strategies
         # print the support size of the current_strategy
-        print("\n Support size of defender strategy: ", mirrored_strategies.shape[0], "\n")
+        print("Support size of defender strategy: ", mirrored_strategies.shape[0], "\n")
     
     def sample_action(self, batch_size):
         support_size = self.current_strategy.shape[0]
@@ -139,8 +139,9 @@ def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2
         all_time_loss = (all_time_loss * j + loss) / (j + 1)
         # print loss values
         if (j + 1) % 10 == 0:
-            print("\n Current average loss for defender: ", avg_loss)
-            print("\n All-time loss for defender: ", all_time_loss, "\n")
+            print(str(j + 1) + " out of " + str(outer_epochs) + " epochs done" + "\n")
+            print("Current average loss for defender: ", avg_loss, "\n")
+            print("All-time loss for defender: ", all_time_loss, "\n")
             avg_counter = 0
             avg_loss = 0
     return all_time_loss
