@@ -12,10 +12,10 @@ import numpy as np
 number_of_battlefields = 3
 budget1 = 1000
 budget2 = 1000
-granularity = 12
+granularity = 18
 add_noise = False
 tie_breaking_rule = "right-in-two"
-preselect = True
+preselect = False
 max_support_size = 50
 sample_support_size = "max"
 patience = 100

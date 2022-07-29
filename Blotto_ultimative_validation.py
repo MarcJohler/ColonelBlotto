@@ -47,6 +47,7 @@ class Blotto_Defender:
                                            track_every = self.track_every, eval_mode = self.eval_mode, eval_every = self.eval_every, patience = self.patience, loss_goal = self.loss_goal, 
                                            plot_every = self.plot_every, surpress_plots = self.surpress_plots)
         
+        
         unmirrored_strategies = ranks[0][labels == 1]
         mirrored_strategies = np.repeat(None, self.n_battlefields).reshape((1, self.n_battlefields))
         for i in range(unmirrored_strategies.shape[0]):
@@ -68,12 +69,13 @@ class Blotto_Defender:
         
     
 class Blotto_Attacker:
-    def __init__(self, budget, symmetric_battlefields, own_weights, opponent_weights, tie_breaking_rule):
+    def __init__(self, budget, symmetric_battlefields, own_weights, opponent_weights, tie_breaking_rule, memory_size):
         self.budget = budget
         self.symmetric_battlefields = symmetric_battlefields
         self.own_weights = own_weights
         self.opponent_weights = opponent_weights
         self.tie_breaking_rule = tie_breaking_rule
+        self.memory_size = memory_size
         # remember bids of opponent
         self.opponent_history = None
         self.current_strategy = None
@@ -84,13 +86,15 @@ class Blotto_Attacker:
         if self.opponent_history is None:
             self.opponent_history = strategy
         else:
-            self.opponent_history = np.unique(np.vstack((self.opponent_history, strategy)).astype(float), axis = 0)
-        delete_n = self.opponent_history.shape[0] - 18
-        if delete_n > 0:
-            self.opponent_history = self.opponent_history[delete_n:]
+            self.opponent_history = np.vstack((self.opponent_history, strategy))
+        
+        if self.opponent_history.shape[0] > self.memory_size:
+            self.opponent_history = self.opponent_history[1:]
         
     def exploit_opponent(self):
-        loss, best_response = evaluate_strategy_subset(self.opponent_history, self.opponent_history, 
+        unique_history = np.unique(self.opponent_history.astype(float), axis = 0)
+        
+        loss, best_response = evaluate_strategy_subset(unique_history, unique_history, 
                                                        self.opponent_weights, self.own_weights,
                                                        self.budget, self.tie_breaking_rule, return_best_response = True)
         self.current_strategy = best_response
@@ -108,7 +112,7 @@ def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2
                                       restarts, inner_epochs, ordered_output, 
                                       track_every, eval_mode, eval_every, patience, loss_goal, 
                                       plot_every, surpress_plots)
-    blotto_attacker = Blotto_Attacker(strategies1[0].sum(), symmetric_battlefields, weights2, weights1, tie_breaking_rule)
+    blotto_attacker = Blotto_Attacker(strategies1[0].sum(), symmetric_battlefields, weights2, weights1, tie_breaking_rule, batch_size)
     # initialize defender with learned strategy
     blotto_defender.generate_random_strategy()
     # sample random action from defender strategy and initialize attacker strategy

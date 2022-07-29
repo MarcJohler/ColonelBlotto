@@ -21,6 +21,9 @@ def add_strategy(strategy_set, add, symmetric_battlefields, n_perms):
         return np.vstack((strategy_set, add))
         
 
+
+### don't use this algorithm - it doesn't make any sense
+
 def greedy_strategy_optimizer(strategies, opponent_budget = None, own_weights = None, opponent_weights = None, tie_breaking_rule = "right-in-two",
                               preselect = False, initialization = "weights", max_support_size = 10, patience = 5, loss_goal = -1, plot_every = 10, surpress_plots = False):
     
@@ -137,7 +140,7 @@ def greedy_strategy_optimizer(strategies, opponent_budget = None, own_weights = 
 
 
 def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_weights = None, opponent_weights = None, tie_breaking_rule = "right-in-two",
-                              restarts = 1, max_support_size = 20, sample_support_size = 40, patience = 5, loss_goal = -1, plot_every = 10, surpress_plots = False):
+                                       preselect = False, restarts = 1, max_support_size = 20, sample_support_size = 40, patience = 5, loss_goal = -1, plot_every = 10, surpress_plots = False):
     # compute budgets from strategies
     own_budget = sum(strategies[0])
     n_battlefields = strategies.shape[1]
@@ -180,7 +183,7 @@ def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_w
             constant_loss = True
             
             for idx, strategy in enumerate(own_strategies):
-                if results_against_best_response[idx] < max_loss_against_best_response:
+                if results_against_best_response[idx] < max_loss_against_best_response and preselect:
                     continue
                 new_strategy = own_strategies[np.arange(support_size) != idx]
                 loss, best_response = evaluate_strategy_subset(opponent_strategies, new_strategy, own_weights, opponent_weights, opponent_budget, tie_breaking_rule, return_best_response = True)
@@ -197,7 +200,10 @@ def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_w
                     constant_loss = False
             # if loss is constant over whole iteration choose a random strategy
             if constant_loss:
-                iteration_best_idx = np.random.choice(np.arange(support_size)[results_against_best_response == max_loss_against_best_response])
+                possible_indices = np.arange(support_size)
+                if preselect:
+                    possible_indices = possible_indices[results_against_best_response == max_loss_against_best_response]
+                iteration_best_idx = np.random.choice(possible_indices)
                 iteration_best_set = own_strategies[np.arange(support_size) != iteration_best_idx]
                 loss, best_response_to_best_set = evaluate_strategy_subset(opponent_strategies, iteration_best_set, own_weights, opponent_weights, opponent_budget, tie_breaking_rule, return_best_response = True)
                 own_strategies = iteration_best_set
