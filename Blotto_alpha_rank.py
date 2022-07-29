@@ -485,15 +485,30 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
                         if symmetric_strategies:
                             x, y, sizes, colors = plot_strategies(best_mixed_strategy[0], best_mixed_strategy[1][:,1], symmetric_battlefields, best_labels)
                             plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                            # get current axes
+                            ax = plt.gca()
+                            # hide y-axis because it is not accurate in this kind of plot
+                            ax.get_yaxis().set_visible(False)
+                            # show plot
                             plt.show()
                         else:
                             # plot for first player
                             x, y, sizes, colors = plot_strategies(best_mixed_strategy[0][0], best_mixed_strategy[0][1][:,1], symmetric_battlefields, best_labels[0])
                             plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                            # get current axes
+                            ax = plt.gca()
+                            # hide y-axis because it is not accurate in this kind of plot
+                            ax.get_yaxis().set_visible(False)
+                            # show plot
                             plt.show()
                             # plot for second player
                             x, y, sizes, colors = plot_strategies(best_mixed_strategy[1][0], best_mixed_strategy[1][1][:,1], symmetric_battlefields, best_labels[1])
                             plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                            # get current axes
+                            ax = plt.gca()
+                            # hide y-axis because it is not accurate in this kind of plot
+                            ax.get_yaxis().set_visible(False)
+                            # show plot
                             plt.show()
                     remaining_patience = patience
                 
@@ -505,15 +520,30 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
                         print("Converged after ", restart * epochs + i + 1, " iterations with loss ", best_loss)
                         x, y, sizes, colors = plot_strategies(best_mixed_strategy[0], best_mixed_strategy[1][:,1], symmetric_battlefields, best_labels)
                         plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                        # get current axes
+                        ax = plt.gca()
+                        # hide y-axis because it is not accurate in this kind of plot
+                        ax.get_yaxis().set_visible(False)
+                        # show plot
                         plt.show()
                     else:
                         # plot for first player
                         x, y, sizes, colors = plot_strategies(best_mixed_strategy[0][0], best_mixed_strategy[0][1][:,1], symmetric_battlefields, best_labels[0])
                         plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                        # get current axes
+                        ax = plt.gca()
+                        # hide y-axis because it is not accurate in this kind of plot
+                        ax.get_yaxis().set_visible(False)
+                        # show plot
                         plt.show()
                         # plot for second player
                         x, y, sizes, colors = plot_strategies(best_mixed_strategy[1][0], best_mixed_strategy[1][1][:,1], symmetric_battlefields, best_labels[1])
                         plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                        # get current axes
+                        ax = plt.gca()
+                        # hide y-axis because it is not accurate in this kind of plot
+                        ax.get_yaxis().set_visible(False)
+                        # show plot
                         plt.show()
                     return best_mixed_strategy, best_labels
             
@@ -522,15 +552,30 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
                     intermediate_result = summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output = False)
                     x, y, sizes, colors = plot_strategies(intermediate_result[0], intermediate_result[1][:,1], symmetric_battlefields)
                     plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                    # get current axes
+                    ax = plt.gca()
+                    # hide y-axis because it is not accurate in this kind of plot
+                    ax.get_yaxis().set_visible(False)
+                    # show plot
                     plt.show()
                 else:
                     # plot for first player
                     x, y, sizes, colors = plot_strategies(intermediate_result[0][0], intermediate_result[0][1][:,1], symmetric_battlefields)
                     plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                    # get current axes
+                    ax = plt.gca()
+                    # hide y-axis because it is not accurate in this kind of plot
+                    ax.get_yaxis().set_visible(False)
+                    # show plot
                     plt.show()
                     # plot for second player
                     x, y, sizes, colors = plot_strategies(intermediate_result[1][0], intermediate_result[1][1][:,1], symmetric_battlefields)
                     plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+                    # get current axes
+                    ax = plt.gca()
+                    # hide y-axis because it is not accurate in this kind of plot
+                    ax.get_yaxis().set_visible(False)
+                    # show plot
                     plt.show()
                 
         print(restart + 1, " out of ", restarts, " restarts done")

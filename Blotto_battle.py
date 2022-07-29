@@ -11,7 +11,7 @@ from Blotto_discretizer import discretize_action_space
 number_of_battlefields = 3
 budget1 = 1000
 budget2 = 1500
-symmetric_battlefields = True
+granularity_level = 32
 add_noise = False
 batch_size = 10
 outer_epochs = 10**2
@@ -26,6 +26,9 @@ restarts = 1
 tie_breaking_rule = "right-in-two"
 weights1 = np.array([1, 1, 1])
 symmetric_battlefields = len(np.unique(weights1)) == 1
+
+strategies, probs = discretize_action_space(number_of_battlefields, budget1, symmetric_battlefields, 
+                                            granularity_level = granularity_level, add_noise = add_noise, integer_bids = True)
 
 ##############
 strategies11_1, probs11_1 = discretize_action_space(number_of_battlefields, budget1, symmetric_battlefields, 
@@ -48,7 +51,7 @@ combined = np.unique(combined, axis = 0)
 
 probs = None
 
-all_time_loss = blotto_ultimative_validation(combined, probs, strategies2 = None, probs2 = None, weights1 = weights1, symmetric_battlefields = symmetric_battlefields,
+all_time_loss = blotto_ultimative_validation(strategies, probs, strategies2 = None, probs2 = None, weights1 = weights1, symmetric_battlefields = symmetric_battlefields,
                       pop_size = pop_size, alpha = 100, mr = mr, tie_breaking_rule = tie_breaking_rule,
                       batch_size = batch_size, restarts = restarts, outer_epochs = outer_epochs, inner_epochs = inner_epochs, 
                       ordered_output = True, track_every = inner_epochs * 10, eval_mode = "kmeans", eval_every = eval_every, 

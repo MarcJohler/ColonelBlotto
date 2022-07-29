@@ -284,6 +284,11 @@ def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_w
         
     x, y, sizes, colors = plot_result(strategies, overall_best_set, symmetric_battlefields)
     plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+    # get current axes
+    ax = plt.gca()
+    # hide y-axis because it is not accurate in this kind of plot
+    ax.get_yaxis().set_visible(False)
+    # show plot
     plt.show()
     
     return overall_best_set, overall_best_indizes, overall_best_loss

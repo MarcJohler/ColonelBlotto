@@ -12,7 +12,7 @@ import numpy as np
 number_of_battlefields = 3
 budget1 = 1000
 budget2 = 1000
-granularity = 18
+granularity = 10
 add_noise = False
 tie_breaking_rule = "right-in-two"
 preselect = False
