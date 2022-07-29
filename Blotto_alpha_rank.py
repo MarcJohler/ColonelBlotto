@@ -468,7 +468,7 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
                 print("Current best loss: " + str(best_loss))
 
             if (i + 1) % eval_every == 0:
-                intermediate_result = summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output = True)
+                intermediate_result = summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output = ordered_output)
                 avg_loss, labels = evaluation_step(intermediate_result, symmetric_strategies, budget1, budget2,
                                                    weights1, weights2, tie_breaking_rule, eval_mode)
                 # if there are multiple loss values, optimize their average
@@ -549,7 +549,7 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
             
             if ((i + 1) % round(plot_every) == 0):
                 if symmetric_strategies:
-                    intermediate_result = summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output = False)
+                    intermediate_result = summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output = ordered_output)
                     x, y, sizes, colors = plot_strategies(intermediate_result[0], intermediate_result[1][:,1], symmetric_battlefields)
                     plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
                     # get current axes
@@ -579,8 +579,7 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
                     plt.show()
                 
         print(restart + 1, " out of ", restarts, " restarts done")
-
-    # normalize the score values and summarize symmetric strategies
-    #return summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output), best_labels
+        
+    # return the best mixed strategy and the labels of the actions in the support
     return best_mixed_strategy, best_labels
     

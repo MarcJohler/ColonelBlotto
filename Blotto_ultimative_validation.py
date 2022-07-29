@@ -5,9 +5,10 @@ Created on Fri Jul 15 17:40:05 2022
 @author: marc
 """
 
-from Blotto_alpha_rank import blotto_alpha_rank, evaluate_strategy_subset, blotto_mechanism, get_unique_permutations
+from Blotto_alpha_rank import blotto_alpha_rank, evaluate_strategy_subset, blotto_mechanism, get_unique_permutations, plot_strategies
 import numpy as np
 import scipy.special as ss
+import matplotlib.pyplot as plt
 
 class Blotto_Defender:
     def __init__(self, strategies1, probs1, strategies2, probs2, weights1, weights2, tie_breaking_rule,
@@ -39,15 +40,18 @@ class Blotto_Defender:
         self.current_strategy = None
         self.n_battlefields = strategies1.shape[1]
         self.n_perms_max = ss.perm(self.n_battlefields, self.n_battlefields, True)
+        self.action_frequencies = np.zeros(strategies1.shape[0])
         
     def generate_random_strategy(self):
         ranks, labels  = blotto_alpha_rank(self.strategies1, self.probs1, self.strategies2, self.probs2, self.weights1, self.weights2, self.tie_breaking_rule,
                                            pop_size = self.pop_size, alpha = self.alpha, mr = self.mr, 
-                                           restarts = self.restarts, epochs = self.epochs, 
+                                           restarts = self.restarts, epochs = self.epochs, ordered_output = False, 
                                            track_every = self.track_every, eval_mode = self.eval_mode, eval_every = self.eval_every, patience = self.patience, loss_goal = self.loss_goal, 
                                            plot_every = self.plot_every, surpress_plots = self.surpress_plots)
         
-        
+        # remember actions in support
+        self.action_frequencies += labels
+        # extract chosen actions for support of mixed strategy
         unmirrored_strategies = ranks[0][labels == 1]
         mirrored_strategies = np.repeat(None, self.n_battlefields).reshape((1, self.n_battlefields))
         for i in range(unmirrored_strategies.shape[0]):
@@ -69,7 +73,8 @@ class Blotto_Defender:
         
     
 class Blotto_Attacker:
-    def __init__(self, budget, symmetric_battlefields, own_weights, opponent_weights, tie_breaking_rule, memory_size):
+    def __init__(self, strategies, budget, symmetric_battlefields, own_weights, opponent_weights, tie_breaking_rule, memory_size):
+        self.strategies = strategies
         self.budget = budget
         self.symmetric_battlefields = symmetric_battlefields
         self.own_weights = own_weights
@@ -94,7 +99,7 @@ class Blotto_Attacker:
     def exploit_opponent(self):
         unique_history = np.unique(self.opponent_history.astype(float), axis = 0)
         
-        loss, best_response = evaluate_strategy_subset(unique_history, unique_history, 
+        loss, best_response = evaluate_strategy_subset(self.strategies, unique_history, 
                                                        self.opponent_weights, self.own_weights,
                                                        self.budget, self.tie_breaking_rule, return_best_response = True)
         self.current_strategy = best_response
@@ -107,12 +112,13 @@ def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2
                                  restarts = 1, batch_size = 100, outer_epochs = 100, inner_epochs = 1000, 
                                  ordered_output = True, track_every = 100, eval_mode = "kmeans", eval_every = 100, 
                                  patience = 5, loss_goal = 0.12, plot_every = 100, surpress_plots = True):
+
     blotto_defender = Blotto_Defender(strategies1, probs1, strategies2, probs2, weights1, weights2, tie_breaking_rule,
                                       pop_size, alpha, mr, 
                                       restarts, inner_epochs, ordered_output, 
                                       track_every, eval_mode, eval_every, patience, loss_goal, 
                                       plot_every, surpress_plots)
-    blotto_attacker = Blotto_Attacker(strategies1[0].sum(), symmetric_battlefields, weights2, weights1, tie_breaking_rule, batch_size)
+    blotto_attacker = Blotto_Attacker(strategies1, strategies1[0].sum(), symmetric_battlefields, weights2, weights1, tie_breaking_rule, batch_size)
     # initialize defender with learned strategy
     blotto_defender.generate_random_strategy()
     # sample random action from defender strategy and initialize attacker strategy
@@ -144,6 +150,16 @@ def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2
             print("All-time loss for defender: ", all_time_loss, "\n")
             avg_counter = 0
             avg_loss = 0
+    # normalize frequencies for usage in plots
+    action_frequencies = blotto_defender.action_frequencies / sum(blotto_defender.action_frequencies)
+    x, y, sizes, colors = plot_strategies(strategies1, action_frequencies, symmetric_battlefields, action_frequencies > 0)
+    plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+    # get current axes
+    ax = plt.gca()
+    # hide y-axis because it is not accurate in this kind of plot
+    ax.get_yaxis().set_visible(False)
+    # show plot
+    plt.show()
     return all_time_loss
             
         
