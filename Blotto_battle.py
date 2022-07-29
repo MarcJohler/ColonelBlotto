@@ -14,7 +14,7 @@ budget2 = 1500
 granularity_level = 32
 add_noise = False
 batch_size = 10
-outer_epochs = 10**3
+outer_epochs = 10**2
 inner_epochs = 10**6
 mode = "kmeans"
 eval_every = 10**3
@@ -51,7 +51,7 @@ combined = np.unique(combined, axis = 0)
 
 probs = None
 
-all_time_loss = blotto_ultimative_validation(strategies, probs, strategies2 = None, probs2 = None, weights1 = weights1, symmetric_battlefields = symmetric_battlefields,
+all_time_loss, action_frequencies = blotto_ultimative_validation(strategies, probs, strategies2 = None, probs2 = None, weights1 = weights1, symmetric_battlefields = symmetric_battlefields,
                       pop_size = pop_size, alpha = 100, mr = mr, tie_breaking_rule = tie_breaking_rule,
                       batch_size = batch_size, restarts = restarts, outer_epochs = outer_epochs, inner_epochs = inner_epochs, 
                       ordered_output = True, track_every = inner_epochs * 10, eval_mode = "kmeans", eval_every = eval_every, 
