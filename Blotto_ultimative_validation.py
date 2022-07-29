@@ -150,16 +150,18 @@ def blotto_ultimative_validation(strategies1, probs1, strategies2 = None, probs2
             print("All-time loss for defender: ", all_time_loss, "\n")
             avg_counter = 0
             avg_loss = 0
-    # normalize frequencies for usage in plots
-    action_frequencies = blotto_defender.action_frequencies / sum(blotto_defender.action_frequencies)
-    x, y, sizes, colors = plot_strategies(strategies1, action_frequencies, symmetric_battlefields, action_frequencies > 0)
-    plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
-    # get current axes
-    ax = plt.gca()
-    # hide y-axis because it is not accurate in this kind of plot
-    ax.get_yaxis().set_visible(False)
-    # show plot
-    plt.show()
+            # also plot the current historic distribution of actions played
+            # normalize frequencies for usage in plots
+            action_frequencies = blotto_defender.action_frequencies / sum(blotto_defender.action_frequencies)
+            x, y, sizes, colors = plot_strategies(strategies1, action_frequencies, symmetric_battlefields, action_frequencies > 0)
+            plt.scatter(x, y, s = sizes, color = colors, alpha = 0.5 * (colors == "green").astype(int) + 0.5)
+            # get current axes
+            ax = plt.gca()
+            # hide y-axis because it is not accurate in this kind of plot
+            ax.get_yaxis().set_visible(False)
+            # show plot
+            plt.show()
+            
     return all_time_loss
             
         
