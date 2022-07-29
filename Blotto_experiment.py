@@ -5,21 +5,22 @@ from Blotto_alpha_rank import blotto_alpha_rank
 import numpy as np
 import multiprocessing as mp
 from numba import jit, njit, cuda
+import sys
 #import torch
 
 number_of_battlefields = 3
 budget1 = 1000
 budget2 = 1000
-granularity_level = 10
+granularity_level = 18
 add_noise = False
 epochs = 10**7
-mode = "kmeans"
+mode = "extensive"
 eval_every = 10**2
-patience = 10**4
-mr = 0.1
-pop_size = 10
+patience = 10**8
+mr = 0.03162277660168379
+pop_size = 5
 restarts = 1
-plot_every = 10**5
+plot_every = 10**6
 tie_breaking_rule = "right-in-two"
 weights1 = np.array([1, 1, 1])
 symmetric_battlefields = len(np.unique(weights1)) == 1
@@ -50,4 +51,11 @@ ranks, labels = blotto_alpha_rank(strategies1, probs1, strategies2, probs2, weig
 
 
 
+w = open(sys.path[0] + "/outputs/blotto_experiment_ranks_extensive_gran18.txt", "w")
+w.write(str(ranks))
+w.close()
+
+w2 = open(sys.path[0] + "/outputs/blotto_experiment_labels_extensive_gran18.txt", "w")
+w2.write(str(labels))
+w2.close()
 # %%

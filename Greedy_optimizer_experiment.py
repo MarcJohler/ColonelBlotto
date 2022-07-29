@@ -6,18 +6,16 @@ Created on Tue Jul 19 11:18:56 2022
 """
 
 from Blotto_discretizer import discretize_action_space
-from Greedy_optimizer import greedy_strategy_optimizer_backward, greedy_strategy_optimizer, plot_result
+from Greedy_optimizer import greedy_strategy_optimizer_backward, greedy_strategy_optimizer
 import numpy as np
-import matplotlib.pyplot as plt
 
 number_of_battlefields = 3
 budget1 = 1000
 budget2 = 1000
-granularity = 24
+granularity = 12
 add_noise = False
 tie_breaking_rule = "right-in-two"
-initialization = "weights"
-restarts = 1
+preselect = True
 max_support_size = 50
 sample_support_size = "max"
 patience = 100
@@ -51,8 +49,5 @@ combined = np.unique(np.round(combined, 4), axis = 0)
 
 
 best_set, overall_best_indizes, best_loss = greedy_strategy_optimizer_backward(one_granularity, opponent_budget = budget2, own_weights = weights1, opponent_weights = weights2, tie_breaking_rule = "right-in-two",
-                                                         restarts = restarts, max_support_size = max_support_size, sample_support_size = sample_support_size, 
+                                                         preselect = preselect, max_support_size = max_support_size, sample_support_size = sample_support_size, 
                                                          patience = patience, loss_goal = loss_goal, plot_every = 10, surpress_plots = False)
-
-#best_set2, best_loss2 = greedy_strategy_optimizer(one_granularity, opponent_budget = budget2, own_weights = weights1, opponent_weights = weights1, tie_breaking_rule = "right-in-two", 
-#                                                 preselect = False, initialization = best_set, max_support_size = 18, patience = 10, loss_goal = -1)

@@ -465,6 +465,7 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
             #count_strat2[new_prim2, 1] += 1
             if (i + 1) % track_every == 0:
                 print(restart * epochs + i + 1," out of ", epochs * restarts, " iterations done")
+                print("Current best loss: " + str(best_loss))
 
             if (i + 1) % eval_every == 0:
                 intermediate_result = summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output = True)
@@ -535,5 +536,6 @@ def blotto_alpha_rank(strategies1, probs1, strategies2 = None, probs2 = None, we
         print(restart + 1, " out of ", restarts, " restarts done")
 
     # normalize the score values and summarize symmetric strategies
-    return summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output), best_labels
+    #return summarize_output(count_strat1, count_strat2, strategies1, strategies2, symmetric_strategies, ordered_output), best_labels
+    return best_mixed_strategy, best_labels
     
