@@ -13,14 +13,14 @@ budget1 = 1000
 budget2 = 1000
 granularity_level = 18
 add_noise = False
-epochs = 10**4
+epochs = 10**5
 mode = "kmeans"
 eval_every = 10**2
 patience = 10**8
 mr = 0.03162277660168379
 pop_size = 5
 restarts = 1
-plot_every = 10**6
+plot_every = 10**4 * 2.5
 tie_breaking_rule = "right-in-two"
 weights1 = np.array([1, 1, 1])
 symmetric_battlefields = len(np.unique(weights1)) == 1

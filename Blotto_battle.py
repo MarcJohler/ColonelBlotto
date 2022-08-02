@@ -14,7 +14,7 @@ budget2 = 1500
 granularity_level = 32
 add_noise = False
 batch_size = 10
-outer_epochs = 10**2
+outer_epochs = 10**3
 inner_epochs = 10**6
 mode = "kmeans"
 eval_every = 10**3
@@ -56,3 +56,17 @@ all_time_loss, action_frequencies = blotto_ultimative_validation(strategies, pro
                       batch_size = batch_size, restarts = restarts, outer_epochs = outer_epochs, inner_epochs = inner_epochs, 
                       ordered_output = True, track_every = inner_epochs * 10, eval_mode = "kmeans", eval_every = eval_every, 
                       patience = 10**5, loss_goal = loss_goal, plot_every = inner_epochs * 10, surpress_plots = True)
+
+# compute metrics
+nash_eq = np.sum(strategies > 2 / number_of_battlefields * budget1, axis = 1) == 0
+# compute True positives, True negatives, False positives, False negatives
+TP = np.sum((action_frequencies > 0) * nash_eq)
+TN = np.sum((action_frequencies == 0) * (nash_eq == False))
+FP = np.sum((action_frequencies > 0) * (nash_eq == False))
+FN = np.sum((action_frequencies == 0) * nash_eq)
+# compute sensitivity, specifity and balanced accuracy
+sensitivity = TP / (TP + FN)
+specifity = TN / (TN + FP)
+balanced_accuracy = 0.5 * sensitivity + 0.5 * specifity  
+# compute percentage of actions played from NE
+nash_percentage = np.sum(nash_eq * action_frequencies) / np.sum(action_frequencies)

@@ -185,7 +185,7 @@ def greedy_strategy_optimizer(strategies, opponent_budget = None, own_weights = 
 
 
 def greedy_strategy_optimizer_backward(strategies, opponent_budget = None, own_weights = None, opponent_weights = None, tie_breaking_rule = "right-in-two",
-                                       preselect = False, restarts = 1, max_support_size = 20, sample_support_size = 40, patience = 5, loss_goal = -1, plot_every = 10, surpress_plots = False):
+                                       preselect = False, restarts = 1, sample_support_size = 40, patience = 5, loss_goal = -1, plot_every = 10, surpress_plots = False):
     # compute budgets from strategies
     own_budget = sum(strategies[0])
     n_battlefields = strategies.shape[1]
